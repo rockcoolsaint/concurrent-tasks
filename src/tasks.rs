@@ -1,6 +1,6 @@
 use crate::errors::TaskError;
 use tokio::time::{sleep, Duration};
-use log::{info};
+use log::info;
 
 pub async fn task_1() -> Result<(), TaskError> {
     sleep(Duration::from_secs(2)).await; // Simulate work

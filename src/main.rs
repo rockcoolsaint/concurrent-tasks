@@ -8,7 +8,7 @@ use crate::errors::TaskError;
 use crate::shutdown::shutdown_system;
 use tokio::try_join;
 use log::{error, info};
-use tracing_subscriber;
+// use tracing_subscriber;
 
 #[tokio::main]
 async fn main() {
@@ -29,6 +29,9 @@ async fn main() {
 
 async fn run_tasks() -> Result<(), TaskError> {
     let (shutdown_tx, shutdown_rx) = shutdown::shutdown_channel();
+
+    // Spawn shutdown system to listen for shutdown signals
+    let shutdown_handle = tokio::spawn(shutdown_system(shutdown_rx));
 
     // Spawn tasks
     let task1 = tokio::spawn(async { task_1().await });
@@ -52,6 +55,10 @@ async fn run_tasks() -> Result<(), TaskError> {
         }
     }
 
-    shutdown_rx.await.ok(); // Wait for shutdown signal
+    // shutdown_rx.await.ok(); // Wait for shutdown signal
+
+    // Wait for the shutdown listener to complete
+    let _ = shutdown_handle.await;
+
     Ok(())
 }
