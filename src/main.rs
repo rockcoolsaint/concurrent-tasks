@@ -3,7 +3,7 @@ mod errors;
 mod shutdown;
 mod logging;
 
-use crate::tasks::{task_1, task_2, task_3, network_request, database_operation};
+use crate::tasks::{task_1, task_2, task_3, network_request, database_operation, file_io_operation};
 use crate::errors::TaskError;
 use crate::shutdown::shutdown_system;
 use tokio::try_join;
@@ -39,17 +39,19 @@ async fn run_tasks() -> Result<(), TaskError> {
     let task3 = tokio::spawn(async { task_3().await });
     let task4 = tokio::spawn(async { network_request().await });
     let task5 = tokio::spawn(async { database_operation().await });
+    let task6 = tokio::spawn(async { file_io_operation().await });
 
     // Wait for all tasks to finish
-    let result = try_join!(task1, task2, task3, task4, task5);
+    let result = try_join!(task1, task2, task3, task4, task5, task6);
 
     match result {
-        Ok((res1, res2, res3, res4, res5)) => {
+        Ok((res1, res2, res3, res4, res5, res6)) => {
             res1?;
             res2?;
             res3?;
             res4?;
             res5?;
+            res6?;
             info!("All tasks completed successfully.");
         }
         Err(e) => {

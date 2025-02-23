@@ -63,3 +63,15 @@ pub async fn database_operation() -> Result<(), TaskError> {
     info!("Database operation succeeded!");
     Ok(())
 }
+
+// Simulate a file I/O operation
+pub async fn file_io_operation() -> Result<(), TaskError> {
+    let content = "Logging data to file...";
+    if let Err(_) = tokio::fs::write("output.log", content).await {
+        error!("Failed to write to file!");
+        return Err(TaskError::GeneralError("File write failed".into()));
+    }
+    
+    info!("File write successful!");
+    Ok(())
+}
