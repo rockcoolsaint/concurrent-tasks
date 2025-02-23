@@ -49,3 +49,17 @@ pub async fn network_request() -> Result<(), TaskError> {
         }
     }
 }
+
+// Simulate a database operation
+pub async fn database_operation() -> Result<(), TaskError> {
+    let delay = rand::random::<u8>() % 3 + 1; // Random delay 1-3 sec
+    sleep(Duration::from_secs(delay as u64)).await;
+
+    if rand::random::<u8>() % 5 == 0 {
+        error!("Database operation failed!");
+        return Err(TaskError::CriticalError("Database transaction error".into()));
+    }
+
+    info!("Database operation succeeded!");
+    Ok(())
+}
